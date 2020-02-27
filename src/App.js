@@ -1,26 +1,41 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import api from './Components/Api';
+import VideoList from './Components/VideoList';
+import VideoDetail from './Components/VideoDetail';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+    state = {
+        videos: [],
+        video: ''
+    };
+
+    handlevideo = async searchTerm => {
+        const result = await api.get('/search', {
+            params: {
+                q: searchTerm
+            }
+        });
+
+        this.setState({
+            videos: result.data.items,
+            video: result.data.items[0]
+        });
+    };
+
+    componentDidMount() {
+        this.handlevideo('iphone');
+    }
+
+    render() {
+        const { videos, video } = this.state;
+
+        return (
+            <div>
+                <VideoDetail video={video} />
+                <VideoList videos={videos} />
+            </div>
+        );
+    }
 }
 
 export default App;
